@@ -6,13 +6,11 @@ document.getElementById("vanityForm").addEventListener("submit", function(event)
     const keyLength = parseInt(document.getElementById("keyLength").value);
     const addressType = document.getElementById("addressType").value;
 
-    // Prefix ve Suffix doğrulaması
     if (prefix === "" || suffix === "") {
         alert("Prefix ve Suffix boş olamaz.");
         return;
     }
 
-    // Geçersiz karakter kontrolü (yalnızca alfasayısal karakterlere izin ver)
     const regex = /^[a-zA-Z0-9]+$/;
     if (!regex.test(prefix) || !regex.test(suffix)) {
         alert("Prefix ve Suffix yalnızca alfasayısal karakterler içerebilir.");
@@ -56,7 +54,6 @@ document.getElementById("vanityForm").addEventListener("submit", function(event)
     });
 });
 
-// Kopyalama fonksiyonu
 function copyToClipboard(text) {
     const tempInput = document.createElement("input");
     tempInput.value = text;
