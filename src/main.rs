@@ -13,7 +13,7 @@ use rand::Rng;
 struct VanityRequest {
     prefix: String,
     suffix: String,
-    key_length: u16,  // Kullanıcıdan gelen key length (bu direkt private key uzunluğu olmayacak)
+    key_length: u16,
     address_type: String,  // P2PKH, P2SH, P2WPKH
 }
 
@@ -39,7 +39,7 @@ fn generate_vanity_address(vanity_request: Json<VanityRequest>) -> Json<VanityRe
     let result = (0..100_000).into_par_iter().find_map_any(|_| {
         // Her zaman 32 byte'lık (256 bit) bir secret key oluştur
         let random_bytes: [u8; 32] = rand::thread_rng().gen();
-        let secret_key = SecretKey::from_slice(&random_bytes).ok()?;  // Hata olursa None döneriz
+        let secret_key = SecretKey::from_slice(&random_bytes).ok()?;
         let private_key = PrivateKey {
             compressed: true,
             network: Network::Bitcoin,
@@ -95,5 +95,5 @@ fn generate_vanity_address(vanity_request: Json<VanityRequest>) -> Json<VanityRe
 fn rocket() -> _ {
     rocket::build()
         .mount("/api", routes![generate_vanity_address])
-        .mount("/", FileServer::from(relative!("static")))  // Statik dosyaları sunmak için
+        .mount("/", FileServer::from(relative!("static")))
 }
