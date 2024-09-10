@@ -1,0 +1,12 @@
+[package]
+name = "dual_vanity_bitcoin_generator"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+rocket = { version = "0.5.0-rc.1", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bitcoin = "0.26.0"
+rayon = "1.5"
+rand = "0.8" # Bitcoin private key ve adres generation için gerekli

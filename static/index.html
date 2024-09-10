@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Vanity Bitcoin Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Dual Vanity Bitcoin Address Generator</h1>
+    <form id="vanityForm">
+        <label for="prefix">Prefix:</label>
+        <input type="text" id="prefix" name="prefix" required><br><br>
+
+        <label for="suffix">Suffix:</label>
+        <input type="text" id="suffix" name="suffix" required><br><br>
+
+        <label for="keyLength">Private Key Length (1-256 bits):</label>
+        <input type="number" id="keyLength" name="keyLength" min="8" max="256" required><br><br>
+
+        <label for="addressType">Select Address Type:</label>
+        <select id="addressType" name="addressType" required>
+            <option value="P2PKH">P2PKH (Pay to Public Key Hash)</option>
+            <option value="P2SH">P2SH (Pay to Script Hash)</option>
+            <option value="P2WPKH">P2WPKH (Pay to Witness Public Key Hash)</option>
+        </select><br><br>
+
+        <button type="submit">Generate Address</button>
+    </form>
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
