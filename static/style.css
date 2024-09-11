@@ -44,4 +44,12 @@ button:hover {
 
 #result {
     margin-top: 20px;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+#loading {
+    font-size: 18px;
+    color: #333;
 }
