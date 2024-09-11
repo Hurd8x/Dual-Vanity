@@ -6,6 +6,7 @@ document.getElementById("vanityForm").addEventListener("submit", async function(
     const keyLength = parseInt(document.getElementById("keyLength").value);
     const addressType = document.getElementById("addressType").value;
     const resultContainer = document.getElementById("result");
+    const loadingMessage = document.getElementById("loading");
 
     // Input validation
     if (prefix === "" || suffix === "") {
@@ -20,7 +21,8 @@ document.getElementById("vanityForm").addEventListener("submit", async function(
     }
 
     // Show loading message
-    resultContainer.innerHTML = "<p>Adresi oluşturuyor, lütfen bekleyin...</p>";
+    loadingMessage.style.display = "block";
+    resultContainer.innerHTML = "";
 
     try {
         const response = await fetch("/api/generate", {
@@ -41,6 +43,7 @@ document.getElementById("vanityForm").addEventListener("submit", async function(
         }
 
         const data = await response.json();
+        loadingMessage.style.display = "none";
 
         if (data.address) {
             resultContainer.innerHTML = `
@@ -55,6 +58,7 @@ document.getElementById("vanityForm").addEventListener("submit", async function(
             resultContainer.innerHTML = "<p>No address found. Try again!</p>";
         }
     } catch (error) {
+        loadingMessage.style.display = "none";
         resultContainer.innerHTML = `<p>An error occurred: ${error.message}</p>`;
         console.error("Error:", error);
     }
