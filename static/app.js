@@ -1,11 +1,13 @@
-document.getElementById("vanityForm").addEventListener("submit", function(event) {
+document.getElementById("vanityForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
-    const prefix = document.getElementById("prefix").value;
-    const suffix = document.getElementById("suffix").value;
+    const prefix = document.getElementById("prefix").value.trim();
+    const suffix = document.getElementById("suffix").value.trim();
     const keyLength = parseInt(document.getElementById("keyLength").value);
     const addressType = document.getElementById("addressType").value;
+    const resultContainer = document.getElementById("result");
 
+    // Input validation
     if (prefix === "" || suffix === "") {
         alert("Prefix ve Suffix boş olamaz.");
         return;
@@ -13,53 +15,56 @@ document.getElementById("vanityForm").addEventListener("submit", function(event)
 
     const regex = /^[a-zA-Z0-9]+$/;
     if (!regex.test(prefix) || !regex.test(suffix)) {
-        alert("Prefix ve Suffix yalnızca alfasayısal karakterler içerebilir.");
+        alert("Prefix ve Suffix yalnızca alfasayısal karakterler (a-z, A-Z, 0-9) içerebilir.");
         return;
     }
 
-    fetch("/api/generate", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            prefix: prefix,
-            suffix: suffix,
-            key_length: keyLength,
-            address_type: addressType
-        })
-    })
-    .then(response => {
+    // Show loading message
+    resultContainer.innerHTML = "<p>Adresi oluşturuyor, lütfen bekleyin...</p>";
+
+    try {
+        const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                prefix: prefix,
+                suffix: suffix,
+                key_length: keyLength,
+                address_type: addressType
+            })
+        });
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
+
+        const data = await response.json();
+
         if (data.address) {
-            document.getElementById("result").innerHTML = `
-                <p><strong>Address:</strong> ${data.address} <button onclick="copyToClipboard('${data.address}')">Kopyala</button></p>
-                <p><strong>Private Key (WIF):</strong> ${data.private_key} <button onclick="copyToClipboard('${data.private_key}')">Kopyala</button></p>
+            resultContainer.innerHTML = `
+                <p><strong>Address:</strong> ${data.address} 
+                <button onclick="copyToClipboard('${data.address}')">Kopyala</button></p>
+                <p><strong>Private Key (WIF):</strong> ${data.private_key} 
+                <button onclick="copyToClipboard('${data.private_key}')">Kopyala</button></p>
                 <p><strong>Public Key:</strong> ${data.public_key}</p>
                 <p><strong>Address Type:</strong> ${data.address_type}</p>
-                <p><strong>Address Hash:</strong> ${data.address_hash}</p>
             `;
         } else {
-            document.getElementById("result").innerHTML = "<p>No address found. Try again!</p>";
+            resultContainer.innerHTML = "<p>No address found. Try again!</p>";
         }
-    })
-    .catch(error => {
-        document.getElementById("result").innerHTML = `<p>An error occurred: ${error.message}</p>`;
+    } catch (error) {
+        resultContainer.innerHTML = `<p>An error occurred: ${error.message}</p>`;
         console.error("Error:", error);
-    });
+    }
 });
 
+// Modern clipboard API
 function copyToClipboard(text) {
-    const tempInput = document.createElement("input");
-    tempInput.value = text;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
-    alert("Kopyalandı: " + text);
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Kopyalandı: " + text);
+    }).catch(err => {
+        console.error("Kopyalama hatası: ", err);
+    });
 }
